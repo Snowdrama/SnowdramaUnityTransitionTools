@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.PlayerLoop;
-
+using Snowdrama.Core;
 
 namespace Snowdrama.Transition
 {
@@ -47,9 +47,14 @@ namespace Snowdrama.Transition
                 {
                     var requiredScene = requredSceneListObject.listOfRequiredSceneNames[i];
 
-                    SceneManager.LoadSceneAsync(requiredScene.sceneName, LoadSceneMode.Additive);
                     if (requiredScene.dontDestroyOnLoad)
                     {
+                        if (!loadedScenes.Contains(requiredScene.sceneName) && !sceneNotToUnload.Contains(requiredScene.sceneName))
+                        {
+                            //add it if it's not already in the lists. 
+                            SceneManager.LoadSceneAsync(requiredScene.sceneName, LoadSceneMode.Additive);
+                        }
+
                         //we don't want the don't destroy scene in the regular loaded scenes list
                         if (loadedScenes.Contains(requiredScene.sceneName))
                         {
@@ -96,7 +101,7 @@ namespace Snowdrama.Transition
 
                 case TransitionState.HidingScene:
                     transitionSpeed = 1.0f / transitionDuration;
-                    transitionValue += Time.deltaTime;
+                    transitionValue += Time.deltaTime * transitionSpeed;
                     if (transitionValue >= 1.0f)
                     {
                         transitionState = TransitionState.SceneHidden;
@@ -114,7 +119,7 @@ namespace Snowdrama.Transition
 
                 case TransitionState.RevealingScene:
                     transitionSpeed = 1.0f / transitionDuration;
-                    transitionValue -= Time.deltaTime;
+                    transitionValue -= Time.deltaTime * transitionSpeed;
                     if (transitionValue <= 0.0f)
                     {
                         transitionState = TransitionState.End;

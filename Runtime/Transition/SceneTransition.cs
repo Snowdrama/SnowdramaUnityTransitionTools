@@ -8,11 +8,11 @@ namespace Snowdrama.Transition
     public class SceneTransition : ScriptableObject
     {
         public string sceneName;
-
+        public float transitionDuration;
         public void TransitionToThis()
         {
             Debug.Log("Going To Scene");
-            SceneController.StartTransition(sceneName, 1.0f, null);
+            SceneController.StartTransition(sceneName, transitionDuration, null);
         }
     }
 }
