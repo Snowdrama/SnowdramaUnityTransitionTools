@@ -8,17 +8,27 @@ namespace Snowdrama.Transition
 {
     public class ImageFadeTransition : Transition
     {
-        [SerializeField] private float hideTransitionSpeed;
-        [SerializeField] private float showTransitionSpeed;
-
         public Image transitionImage;
         public Color transitionColor;
-
+        private void Start()
+        {
+            if(transitionImage == null)
+            {
+                transitionImage = GetComponent<Image>();
+            }
+        }
         public override void UpdateTransition(float transitionValue)
         {
 
             transitionColor.a = transitionValue;
             transitionImage.color = transitionColor;
+        }
+        private void OnValidate()
+        {
+            if (transitionImage == null)
+            {
+                transitionImage = GetComponent<Image>();
+            }
         }
     }
 }
