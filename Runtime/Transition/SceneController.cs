@@ -88,6 +88,8 @@ namespace Snowdrama.Transition
         public static bool transitioning;
         public static TransitionState transitionState;
         public static Action completeCallback;
+
+        public static bool isTransitioning;
         public static void UpdateTransition()
         {
             switch (transitionState)
@@ -129,6 +131,7 @@ namespace Snowdrama.Transition
 
                 case TransitionState.End:
                     transitionState = TransitionState.None;
+                    isTransitioning = false;
                     break;
             }
         }
@@ -150,11 +153,15 @@ namespace Snowdrama.Transition
 
         public static void StartTransition(string setTargetScene, float setDuration, Action setCompleteCallback)
         {
-            transitionValue = 0;
-            transitionDuration = setDuration;
-            targetScene = setTargetScene;
-            completeCallback = setCompleteCallback;
-            transitionState = TransitionState.Start;
+            if (!isTransitioning)
+            {
+                isTransitioning = true;
+                transitionValue = 0;
+                transitionDuration = setDuration;
+                targetScene = setTargetScene;
+                completeCallback = setCompleteCallback;
+                transitionState = TransitionState.Start;
+            }
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
