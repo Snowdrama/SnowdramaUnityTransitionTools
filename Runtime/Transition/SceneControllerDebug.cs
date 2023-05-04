@@ -6,28 +6,36 @@ namespace Snowdrama.Transition
 {
     public class SceneControllerDebug : MonoBehaviour
     {
-        [SerializeField]
-        private List<string> openScenes;
-        [SerializeField]
-        private List<string> scenesNotToUnload;
-
-        public string targetScene;
-        public float transitionValue;
-        public float transitionDuration;
-        public float transitionSpeed;
-        public bool transitioning;
         public TransitionState transitionState;
+        public float transitionValue;
+        public float transitionSpeed;
+        public SceneTransition sceneTransition;
+        public bool transitioning;
+        [Header("Loaded Scenes")]
+        public List<string> loadedScenes;
+        [Header("Debug")]
+        public List<string> unload;
+        public List<string> load;
+
+        public List<string> unloadDontDestroy;
+        public List<string> loadDontDestroy;
         void Update()
         {
-            openScenes = SceneController.loadedScenes;
-            scenesNotToUnload = SceneController.sceneNotToUnload;
-            targetScene = SceneController.targetScene;
-            transitionValue = SceneController.transitionValue;
-            transitionDuration = SceneController.transitionDuration;
-            transitionSpeed = SceneController.transitionSpeed;
-            transitioning = SceneController.transitioning;
             transitionState = SceneController.transitionState;
+            transitionValue = SceneController.transitionValue;
+            sceneTransition = SceneController.targetSceneTransition;
+            transitionSpeed = SceneController.transitionSpeed;
 
+
+            loadedScenes = SceneController.loadedScenes;
+
+
+
+            unload = SceneController.unload;
+            load = SceneController.load;
+
+            unloadDontDestroy = SceneController.unloadDontDestroy;
+            loadDontDestroy = SceneController.loadDontDestroy;
         }
     }
 }
