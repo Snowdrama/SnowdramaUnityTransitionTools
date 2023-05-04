@@ -21,10 +21,12 @@ namespace Snowdrama.Transition
         WaitingforUnload,
         StartLoad,
         WaitingForLoad,
+        FakeTimeBuffer,
         RevealingScene,
         End,
     }
-    [CreateAssetMenu(fileName ="Scene Controller Options", menuName = "Snowdrama/Transitions/Scene Controller Options")]
+
+    [CreateAssetMenu(fileName = "SceneControllerOptions", menuName = "Snowdrama/Transitions/Scene Controller Options")]
     public class SceneControllerOptions : ScriptableObject
     {
         public bool showConsoleMessages = false;
@@ -104,6 +106,8 @@ namespace Snowdrama.Transition
 
         public static float transitionValue;
         public static float transitionSpeed;
+
+        public static float fakeBufferTime;
         //public static float transitionHideDuration;
         //public static float transitionShowDuration;
         //public static bool transitioning;
@@ -114,11 +118,21 @@ namespace Snowdrama.Transition
         public static List<SceneTransitionAsync_LoadData> asyncUnloadData;
 
         public static TransitionState transitionState;
-        public static Action onScenesLoaded;
-        public static Action onTransitionCompltete;
+
+        public struct TransitionCallbacks
+        {
+            public Action onTransitionStarted;
+            public Action onHideStarted;
+            public Action onHideComplteted;
+            public Action onScenesLoaded;
+            public Action onShowStarted;
+            public Action onShowComplteted;
+            public Action onTransitionCompltete;
+        }
+
+        public static TransitionCallbacks transitionCallbacks;
 
         public static bool isTransitioning;
-
 
         public static List<string> unload = new List<string>();
         public static List<string> load = new List<string>();
@@ -133,14 +147,15 @@ namespace Snowdrama.Transition
                     break;
 
                 case TransitionState.Start:
+                    transitionCallbacks.onHideStarted?.Invoke();
                     transitionState = TransitionState.HidingScene;
                     break;
-
                 case TransitionState.HidingScene:
                     transitionSpeed = 1.0f / targetSceneTransition.hideSceneDuration;
                     transitionValue += Time.deltaTime * transitionSpeed;
                     if (transitionValue >= 1.0f)
                     {
+                        transitionCallbacks.onHideComplteted?.Invoke();
                         transitionState = TransitionState.SceneHidden;
                     }
                     break;
@@ -171,22 +186,32 @@ namespace Snowdrama.Transition
                     var incomplteteLoads = asyncLoadData.Where(x => x.complete == false).ToList();
                     if (incomplteteLoads.Count == 0)
                     {
-                        transitionState = TransitionState.RevealingScene;
-                        onScenesLoaded?.Invoke();
+                        transitionCallbacks.onScenesLoaded?.Invoke();
+                        transitionState = TransitionState.FakeTimeBuffer;
                     }
                     break;
-
+                case TransitionState.FakeTimeBuffer:
+                    transitionSpeed = 1.0f / targetSceneTransition.fakeLoadBufferTime;
+                    fakeBufferTime += Time.deltaTime * transitionSpeed;
+                    if (fakeBufferTime >= 1.0f)
+                    {
+                        fakeBufferTime = 0;
+                        transitionState = TransitionState.RevealingScene;
+                        transitionCallbacks.onShowStarted?.Invoke();
+                    }
+                    break;
                 case TransitionState.RevealingScene:
                     transitionSpeed = 1.0f / targetSceneTransition.showSceneDuration;
                     transitionValue -= Time.deltaTime * transitionSpeed;
                     if (transitionValue <= 0.0f)
                     {
+                        transitionCallbacks.onShowComplteted?.Invoke();
                         transitionState = TransitionState.End;
-                        onTransitionCompltete?.Invoke();
                     }
                     break;
 
                 case TransitionState.End:
+                    transitionCallbacks.onTransitionCompltete?.Invoke();
                     transitionState = TransitionState.None;
                     isTransitioning = false;
                     break;
@@ -451,14 +476,13 @@ namespace Snowdrama.Transition
         }
 
 
-        public static void StartTransition(SceneTransition setSceneTransition, Action setCompleteCallback)
+        public static void StartTransition(SceneTransition setSceneTransition)
         {
             if (!isTransitioning)
             {
                 isTransitioning = true;
                 targetSceneTransition = setSceneTransition;
-
-                onTransitionCompltete = setCompleteCallback;
+                transitionCallbacks.onTransitionStarted?.Invoke();
                 transitionState = TransitionState.Start;
             }
         }

@@ -14,7 +14,7 @@ namespace Snowdrama.Transition
         public void TransitionToThis()
         {
             Debug.Log("Going To Scene");
-            SceneController.StartTransition(sceneTransition, null);
+            SceneController.StartTransition(sceneTransition);
         }
     }
     public enum SceneTransitionMode
@@ -39,6 +39,9 @@ namespace Snowdrama.Transition
 
         [Header("Time")]
         [SerializeField] public float hideSceneDuration;
+
+        [Tooltip("Add a fake load time to make sure the transition doesn't look ugly when the scene loads too fast")]
+        [SerializeField] public float fakeLoadBufferTime;
         [SerializeField] public float showSceneDuration;
 
 

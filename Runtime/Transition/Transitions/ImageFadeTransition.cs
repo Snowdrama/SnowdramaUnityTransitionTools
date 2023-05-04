@@ -17,7 +17,7 @@ namespace Snowdrama.Transition
                 transitionImage = GetComponent<Image>();
             }
         }
-        public override void UpdateTransition(float transitionValue)
+        public override void UpdateTransition(float transitionValue, bool hiding)
         {
 
             transitionColor.a = transitionValue;
