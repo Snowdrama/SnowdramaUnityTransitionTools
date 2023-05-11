@@ -97,7 +97,7 @@ namespace Snowdrama.Transition
 
 
             var loopInserter = UnityPlayerLoopInserter.GetCurrent();
-            loopInserter.InsertInto(typeof(Update), typeof(SceneController), UpdateTransition);
+            loopInserter.InsertAfter(typeof(Update), typeof(SceneController), UpdateTransition);
             loopInserter.Flush();
         }
 
