@@ -1,6 +1,6 @@
 {
   "name": "com.snowdrama.transitions",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A package of tools for transitions",
   "displayName": "Snowdrama Transition Tools",
   "unity": "2019.1",

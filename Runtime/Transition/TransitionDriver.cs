@@ -12,9 +12,13 @@ namespace Snowdrama.Transition
         [SerializeField]
         private Transition currentTransition;
 
+        [SerializeField]
+        private bool randomizeHideTransition;
+        [SerializeField]
+        private bool randomizeShowTransition;
+
 
         private bool hiding;
-        private bool showing;
         private void OnEnable()
         {
             SceneController.transitionCallbacks.onTransitionStarted += OnTransitionStarted;
@@ -37,6 +41,16 @@ namespace Snowdrama.Transition
 
         public void OnTransitionStarted()
         {
+            if(currentTransition == null && transitionList.Count > 0)
+            {
+                currentTransition = transitionList[0];
+            }
+
+            if(randomizeHideTransition && transitionList.Count > 0)
+            {
+                currentTransition = transitionList.GetRandom();
+            }
+
             currentTransition.OnTransitionStarted();
         }
         public void OnHideStarted()
@@ -55,6 +69,15 @@ namespace Snowdrama.Transition
         }
         public void OnShowStarted()
         {
+            if (currentTransition == null && transitionList.Count > 0)
+            {
+                currentTransition = transitionList[0];
+            }
+
+            if (randomizeShowTransition && transitionList.Count > 0)
+            {
+                currentTransition = transitionList.GetRandom();
+            }
             currentTransition.OnShowStarted();
         }
         public void OnShowComplteted()
