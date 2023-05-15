@@ -51,21 +51,21 @@ namespace Snowdrama.Transition
                 currentTransition = transitionList.GetRandom();
             }
 
-            currentTransition.OnTransitionStarted();
+            currentTransition?.OnTransitionStarted();
         }
         public void OnHideStarted()
         {
-            currentTransition.OnHideStarted();
+            currentTransition?.OnHideStarted();
             hiding = true;
         }
         public void OnHideComplteted()
         {
-            currentTransition.OnHideComplteted();
+            currentTransition?.OnHideComplteted();
             hiding = false;
         }
         public void OnScenesLoaded()
         {
-            currentTransition.OnScenesLoaded();
+            currentTransition?.OnScenesLoaded();
         }
         public void OnShowStarted()
         {
@@ -78,20 +78,20 @@ namespace Snowdrama.Transition
             {
                 currentTransition = transitionList.GetRandom();
             }
-            currentTransition.OnShowStarted();
+            currentTransition?.OnShowStarted();
         }
         public void OnShowComplteted()
         {
-            currentTransition.OnShowComplteted();
+            currentTransition?.OnShowComplteted();
         }
         public void OnTransitionComplete()
         {
-            currentTransition.OnTransitionComplete();
+            currentTransition?.OnTransitionComplete();
         }
 
         private void Update()
         {
-            currentTransition.UpdateTransition(SceneController.transitionValue, hiding);
+            currentTransition?.UpdateTransition(SceneController.transitionValue, hiding);
         }
     }
 }
