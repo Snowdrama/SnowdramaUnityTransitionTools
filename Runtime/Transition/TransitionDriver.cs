@@ -20,6 +20,14 @@ namespace Snowdrama.Transition
         private Transition currentTransition;
 
         [SerializeField]
+        private bool rotateTransitionsOnHide;
+        [SerializeField]
+        private bool rotateTransitionsOnShow;
+
+        [SerializeField]
+        private int transitionIndex = 0;
+
+        [SerializeField]
         private bool randomizeHideTransition;
         [SerializeField]
         private bool randomizeShowTransition;
@@ -66,10 +74,12 @@ namespace Snowdrama.Transition
             {
                 transitionCanvas = this.transform.GetChild(0).gameObject;
             }
+            
             if(transitionCanvas.transform.childCount != transitionList.Count)
             {
                 transitionList.Clear();
             }
+            
             for (int i = 0; i < transitionCanvas.transform.childCount; i++)
             {
                 var child = transitionCanvas.transform.GetChild(i);
@@ -83,32 +93,23 @@ namespace Snowdrama.Transition
                     }
                 }
             }
-            if (currentTransition == null && transitionList.Count > 0)
-            {
-                currentTransition = transitionList[0];
-            }
+
+            ValidateTransition();
         }
 
         public void OnTransitionStarted()
         {
-            Debug.Log("Transition Started");
-            transitionCanvas?.SetActive(true);
             if (pauseTimeDuringTransition)
             {
                 Time.timeScale = 0;
             }
-            if (currentTransition == null && transitionList.Count > 0)
-            {
-                currentTransition = transitionList[0];
-            }
 
-            if(randomizeHideTransition && transitionList.Count > 0)
-            {
-                currentTransition?.gameObject?.SetActive(false);
-                currentTransition = transitionList.GetRandom();
-            }
+            ValidateTransition();
 
-            currentTransition?.gameObject?.SetActive(true);
+            RandomizeTransition(randomizeHideTransition);
+            RotateToNextTransition(rotateTransitionsOnHide);
+
+            transitionCanvas?.SetActive(true);
             currentTransition?.OnTransitionStarted();
         }
         public void OnHideStarted()
@@ -132,12 +133,9 @@ namespace Snowdrama.Transition
                 currentTransition = transitionList[0];
             }
 
-            if (randomizeShowTransition && transitionList.Count > 0)
-            {
-                currentTransition?.gameObject?.SetActive(false);
-                currentTransition = transitionList.GetRandom();
-            }
-            currentTransition?.gameObject?.SetActive(true);
+            RandomizeTransition(randomizeShowTransition);
+            RotateToNextTransition(rotateTransitionsOnShow);
+
             currentTransition?.OnShowStarted();
         }
         public void OnShowComplteted()
@@ -146,15 +144,12 @@ namespace Snowdrama.Transition
         }
         public void OnTransitionComplete()
         {
-
-            Debug.Log("Transition Complete");
-            currentTransition?.OnTransitionComplete();
-
-            transitionCanvas?.SetActive(false);
             if (pauseTimeDuringTransition)
             {
                 Time.timeScale = 1;
             }
+            transitionCanvas?.SetActive(false);
+            currentTransition?.OnTransitionComplete();
         }
 
         private void Update()
@@ -167,6 +162,46 @@ namespace Snowdrama.Transition
             else
             {
                 currentTransition?.UpdateTransition(debugTransitionValue, hiding);
+            }
+        }
+
+
+        public void ValidateTransition()
+        {
+            if(transitionList.Count == 0)
+            {
+                Debug.LogError($"Transition list has 0 transitions, one transition is required", this.gameObject);
+                return;
+            }
+
+            if (currentTransition == null)
+            {
+                transitionIndex = 0;
+                currentTransition = transitionList[transitionIndex];
+            }
+        }
+
+        public void RandomizeTransition(bool randomize)
+        {
+            if (randomize && transitionList.Count > 0)
+            {
+                transitionIndex = Random.Range(0, transitionList.Count);
+                currentTransition?.gameObject?.SetActive(false);
+                currentTransition = transitionList[transitionIndex];
+                currentTransition?.gameObject?.SetActive(true);
+            }
+        }
+        public void RotateToNextTransition(bool shouldRotate)
+        {
+            if (shouldRotate && transitionList.Count > 0)
+            {
+                transitionIndex++;
+                transitionIndex = transitionIndex % transitionList.Count;
+
+                currentTransition?.gameObject?.SetActive(false);
+
+                currentTransition = transitionList[transitionIndex];
+                currentTransition?.gameObject?.SetActive(true);
             }
         }
     }

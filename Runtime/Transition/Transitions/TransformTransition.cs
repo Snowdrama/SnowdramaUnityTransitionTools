@@ -29,13 +29,44 @@ namespace Snowdrama.Transition
         // Start is called before the first frame update
         void Start()
         {
-            startPosition = startTransform.position;
-            startRotation = startTransform.rotation;
-
-            endPosition = endTransform.position;
-            endRotation = endTransform.rotation;
+            SetPositionAndRotation();
         }
+        private void OnValidate()
+        {
+#if UNITY_EDITOR
+            if (startTransform == null)
+            {
+                var startGo = new GameObject();
+                startGo.AddComponent<RectTransform>();
+                startGo.name = this.name + "_StartPosition";
+                startTransform = startGo.transform;
+                startGo.transform.parent = this.transform.parent;
+            }
+            if (endTransform == null)
+            {
+                var endGo = new GameObject();
+                endGo.AddComponent<RectTransform>();
+                endGo.name = this.name + "_EndPosition";
+                endTransform = endGo.transform;
+                endGo.transform.parent = this.transform.parent;
+            }
+#endif
+            SetPositionAndRotation();
+        }
+        public void SetPositionAndRotation()
+        {
+            if (startTransform)
+            {
+                startPosition = startTransform.position;
+                startRotation = startTransform.rotation;
+            }
 
+            if (endTransform)
+            {
+                endPosition = endTransform.position;
+                endRotation = endTransform.rotation;
+            }
+        }
         public override void UpdateTransition(float transitionValue, bool hiding)
         {
             if (hiding)

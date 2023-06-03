@@ -40,7 +40,6 @@ namespace Snowdrama.Transition
             textColor.a = transitionValue;
             text.color = textColor;
         }
-
     }
 }
 
