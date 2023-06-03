@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace Snowdrama.Transition
 {
+    [ExecuteAlways]
     public class TransitionDriver : MonoBehaviour
     {
         [SerializeField]
@@ -24,6 +25,10 @@ namespace Snowdrama.Transition
         private bool randomizeShowTransition;
 
         private bool hiding;
+
+        [Header("Debug")]
+        [SerializeField, Range(0, 1)]
+        public float debugTransitionValue;
         private void OnEnable()
         {
             SceneController.transitionCallbacks.onTransitionStarted += OnTransitionStarted;
@@ -154,7 +159,15 @@ namespace Snowdrama.Transition
 
         private void Update()
         {
-            currentTransition?.UpdateTransition(SceneController.transitionValue, hiding);
+            if (Application.isPlaying)
+            {
+                debugTransitionValue = SceneController.transitionValue;
+                currentTransition?.UpdateTransition(SceneController.transitionValue, hiding);
+            }
+            else
+            {
+                currentTransition?.UpdateTransition(debugTransitionValue, hiding);
+            }
         }
     }
 }
