@@ -8,6 +8,12 @@ namespace Snowdrama.Transition
     public class TransitionDriver : MonoBehaviour
     {
         [SerializeField]
+        private GameObject transitionCanvas;
+
+        [SerializeField]
+        private bool pauseTimeDuringTransition = false;
+
+        [SerializeField]
         private List<Transition> transitionList;
         [SerializeField]
         private Transition currentTransition;
@@ -17,7 +23,6 @@ namespace Snowdrama.Transition
         [SerializeField]
         private bool randomizeShowTransition;
 
-
         private bool hiding;
         private void OnEnable()
         {
@@ -26,6 +31,7 @@ namespace Snowdrama.Transition
             SceneController.transitionCallbacks.onHideComplteted += OnHideComplteted;
             SceneController.transitionCallbacks.onScenesLoaded += OnScenesLoaded;
             SceneController.transitionCallbacks.onShowStarted += OnShowStarted;
+            SceneController.transitionCallbacks.onTransitionCompltete += OnTransitionComplete;
             SceneController.transitionCallbacks.onShowComplteted += OnShowComplteted;
         }
 
@@ -36,21 +42,68 @@ namespace Snowdrama.Transition
             SceneController.transitionCallbacks.onHideComplteted -= OnHideComplteted;
             SceneController.transitionCallbacks.onScenesLoaded -= OnScenesLoaded;
             SceneController.transitionCallbacks.onShowStarted -= OnShowStarted;
+            SceneController.transitionCallbacks.onTransitionCompltete -= OnTransitionComplete;
             SceneController.transitionCallbacks.onShowComplteted -= OnShowComplteted;
+        }
+
+        private void Start()
+        {
+            FindTransitions();
+        }
+        private void OnValidate()
+        {
+            FindTransitions();
+        }
+
+        public void FindTransitions()
+        {
+            if (transitionCanvas == null)
+            {
+                transitionCanvas = this.transform.GetChild(0).gameObject;
+            }
+            if(transitionCanvas.transform.childCount != transitionList.Count)
+            {
+                transitionList.Clear();
+            }
+            for (int i = 0; i < transitionCanvas.transform.childCount; i++)
+            {
+                var child = transitionCanvas.transform.GetChild(i);
+
+                var transitionElement = child.GetComponent<Transition>();
+                if (transitionElement)
+                {
+                    if (!transitionList.Contains(transitionElement))
+                    {
+                        transitionList.Add(transitionElement);
+                    }
+                }
+            }
+            if (currentTransition == null && transitionList.Count > 0)
+            {
+                currentTransition = transitionList[0];
+            }
         }
 
         public void OnTransitionStarted()
         {
-            if(currentTransition == null && transitionList.Count > 0)
+            Debug.Log("Transition Started");
+            transitionCanvas?.SetActive(true);
+            if (pauseTimeDuringTransition)
+            {
+                Time.timeScale = 0;
+            }
+            if (currentTransition == null && transitionList.Count > 0)
             {
                 currentTransition = transitionList[0];
             }
 
             if(randomizeHideTransition && transitionList.Count > 0)
             {
+                currentTransition?.gameObject?.SetActive(false);
                 currentTransition = transitionList.GetRandom();
             }
 
+            currentTransition?.gameObject?.SetActive(true);
             currentTransition?.OnTransitionStarted();
         }
         public void OnHideStarted()
@@ -76,8 +129,10 @@ namespace Snowdrama.Transition
 
             if (randomizeShowTransition && transitionList.Count > 0)
             {
+                currentTransition?.gameObject?.SetActive(false);
                 currentTransition = transitionList.GetRandom();
             }
+            currentTransition?.gameObject?.SetActive(true);
             currentTransition?.OnShowStarted();
         }
         public void OnShowComplteted()
@@ -86,7 +141,15 @@ namespace Snowdrama.Transition
         }
         public void OnTransitionComplete()
         {
+
+            Debug.Log("Transition Complete");
             currentTransition?.OnTransitionComplete();
+
+            transitionCanvas?.SetActive(false);
+            if (pauseTimeDuringTransition)
+            {
+                Time.timeScale = 1;
+            }
         }
 
         private void Update()

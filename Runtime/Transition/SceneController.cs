@@ -152,7 +152,7 @@ namespace Snowdrama.Transition
                     break;
                 case TransitionState.HidingScene:
                     transitionSpeed = 1.0f / targetSceneTransition.hideSceneDuration;
-                    transitionValue += Time.deltaTime * transitionSpeed;
+                    transitionValue += Time.unscaledDeltaTime * transitionSpeed;
                     if (transitionValue >= 1.0f)
                     {
                         transitionCallbacks.onHideComplteted?.Invoke();
@@ -192,7 +192,7 @@ namespace Snowdrama.Transition
                     break;
                 case TransitionState.FakeTimeBuffer:
                     transitionSpeed = 1.0f / targetSceneTransition.fakeLoadBufferTime;
-                    fakeBufferTime += Time.deltaTime * transitionSpeed;
+                    fakeBufferTime += Time.unscaledDeltaTime * transitionSpeed;
                     if (fakeBufferTime >= 1.0f)
                     {
                         fakeBufferTime = 0;
@@ -202,7 +202,7 @@ namespace Snowdrama.Transition
                     break;
                 case TransitionState.RevealingScene:
                     transitionSpeed = 1.0f / targetSceneTransition.showSceneDuration;
-                    transitionValue -= Time.deltaTime * transitionSpeed;
+                    transitionValue -= Time.unscaledDeltaTime * transitionSpeed;
                     if (transitionValue <= 0.0f)
                     {
                         transitionCallbacks.onShowComplteted?.Invoke();
