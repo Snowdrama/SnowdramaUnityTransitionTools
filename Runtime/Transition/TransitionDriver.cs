@@ -62,6 +62,8 @@ namespace Snowdrama.Transition
         private void Start()
         {
             FindTransitions();
+            transitionCanvas?.SetActive(false);
+            currentTransition?.gameObject?.SetActive(false);
         }
         private void OnValidate()
         {
@@ -74,8 +76,13 @@ namespace Snowdrama.Transition
             {
                 transitionCanvas = this.transform.GetChild(0).gameObject;
             }
-            
-            if(transitionCanvas.transform.childCount != transitionList.Count)
+
+            if(transitionList == null)
+            {
+                transitionList = new List<Transition>();
+            }
+
+            if (transitionCanvas.transform.childCount != transitionList.Count)
             {
                 transitionList.Clear();
             }
