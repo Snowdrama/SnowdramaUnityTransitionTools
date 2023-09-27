@@ -123,10 +123,10 @@ namespace Snowdrama.Transition
         {
             public Action onTransitionStarted;
             public Action onHideStarted;
-            public Action onHideComplteted;
+            public Action onHideCompleted;
             public Action onScenesLoaded;
             public Action onShowStarted;
-            public Action onShowComplteted;
+            public Action onShowCompleted;
             public Action onTransitionCompltete;
         }
 
@@ -155,7 +155,7 @@ namespace Snowdrama.Transition
                     transitionValue += Time.unscaledDeltaTime * transitionSpeed;
                     if (transitionValue >= 1.0f)
                     {
-                        transitionCallbacks.onHideComplteted?.Invoke();
+                        transitionCallbacks.onHideCompleted?.Invoke();
                         transitionState = TransitionState.SceneHidden;
                     }
                     break;
@@ -205,7 +205,7 @@ namespace Snowdrama.Transition
                     transitionValue -= Time.unscaledDeltaTime * transitionSpeed;
                     if (transitionValue <= 0.0f)
                     {
-                        transitionCallbacks.onShowComplteted?.Invoke();
+                        transitionCallbacks.onShowCompleted?.Invoke();
                         transitionState = TransitionState.End;
                     }
                     break;

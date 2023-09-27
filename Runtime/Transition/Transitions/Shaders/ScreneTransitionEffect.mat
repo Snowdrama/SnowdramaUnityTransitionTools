@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PatternTex:
-        m_Texture: {fileID: 2800000, guid: aaed39a24bde35d4c8ed15b7f856e7b6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1c81ceea659aba64d88c6c46f24eca81, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TransTex:
@@ -75,7 +75,7 @@ Material:
     - _CutoffSteps: 1923
     m_Floats:
     - _BumpScale: 1
-    - _Cutoff: -0.0011614591
+    - _Cutoff: -0.0005631419
     - _CutoffSteps: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0

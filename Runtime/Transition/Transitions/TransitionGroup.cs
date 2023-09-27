@@ -53,11 +53,11 @@ namespace Snowdrama.Transition
                 e.subTransition.OnHideStarted();
             }
         }
-        public override void OnHideComplteted()
+        public override void OnHideCompleted()
         {
             foreach (var e in transitionElements)
             {
-                e.subTransition.OnHideComplteted();
+                e.subTransition.OnHideCompleted();
             }
         }
         public override void OnScenesLoaded()
@@ -74,11 +74,11 @@ namespace Snowdrama.Transition
                 e.subTransition.OnShowStarted();
             }
         }
-        public override void OnShowComplteted()
+        public override void OnShowCompleted()
         {
             foreach (var e in transitionElements)
             {
-                e.subTransition.OnShowComplteted();
+                e.subTransition.OnShowCompleted();
             }
         }
         public override void OnTransitionComplete()

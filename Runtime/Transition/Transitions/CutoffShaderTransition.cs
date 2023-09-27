@@ -42,7 +42,7 @@ namespace Snowdrama.Transition
             }
         }
 
-        public override void OnHideComplteted()
+        public override void OnHideCompleted()
         {
             if (changePatternMidTransition)
             {
