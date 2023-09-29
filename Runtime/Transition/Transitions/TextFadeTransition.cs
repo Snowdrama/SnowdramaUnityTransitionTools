@@ -20,9 +20,10 @@ namespace Snowdrama.Transition
             textColor.a = 0;
         }
 
-        private void OnValidate()
+        public override void OnValidate()
         {
-            if(text == null)
+            base.OnValidate();
+            if (text == null)
             {
                 text = this.GetComponent<TMP_Text>();
             }

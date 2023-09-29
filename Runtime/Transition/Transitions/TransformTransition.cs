@@ -31,8 +31,9 @@ namespace Snowdrama.Transition
         {
             SetPositionAndRotation();
         }
-        private void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
 #if UNITY_EDITOR
             if (startTransform == null)
             {

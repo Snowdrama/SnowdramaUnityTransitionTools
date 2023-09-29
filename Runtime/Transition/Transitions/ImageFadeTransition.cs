@@ -23,8 +23,9 @@ namespace Snowdrama.Transition
             transitionColor.a = transitionValue;
             transitionImage.color = transitionColor;
         }
-        private void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
             if (transitionImage == null)
             {
                 transitionImage = GetComponent<Image>();

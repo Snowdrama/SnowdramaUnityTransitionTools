@@ -1,6 +1,6 @@
 {
   "name": "com.snowdrama.transitions",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "A package of tools for transitions",
   "displayName": "Snowdrama Transition Tools",
   "unity": "2019.1",
@@ -9,7 +9,9 @@
     "email": "SnowdramaGames@gmail.com",
     "url": "http://www.snowdrama.net"
   },
-  "dependencies": {},
+  "dependencies": {
+    
+  },
   "type": "utility",
   "samples": [
     {

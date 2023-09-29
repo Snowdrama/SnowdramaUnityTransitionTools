@@ -139,6 +139,7 @@ namespace Snowdrama.Transition
         public static List<string> unloadDontDestroy = new List<string>();
         public static List<string> loadDontDestroy = new List<string>();
 
+        public static List<string> allowedTransitions;
         public static void UpdateTransition()
         {
             switch (transitionState)
@@ -151,10 +152,19 @@ namespace Snowdrama.Transition
                     transitionState = TransitionState.HidingScene;
                     break;
                 case TransitionState.HidingScene:
-                    transitionSpeed = 1.0f / targetSceneTransition.hideSceneDuration;
-                    transitionValue += Time.unscaledDeltaTime * transitionSpeed;
-                    if (transitionValue >= 1.0f)
+                    if(targetSceneTransition.hideSceneDuration > 0)
                     {
+                        transitionSpeed = 1.0f / targetSceneTransition.hideSceneDuration;
+                        transitionValue += Time.unscaledDeltaTime * transitionSpeed;
+                        if (transitionValue >= 1.0f)
+                        {
+                            transitionValue = 1.0f;
+                            transitionCallbacks.onHideCompleted?.Invoke();
+                            transitionState = TransitionState.SceneHidden;
+                        }
+                    } else {
+                        //if it's 0 it should be instant
+                        transitionValue = 1.0f;
                         transitionCallbacks.onHideCompleted?.Invoke();
                         transitionState = TransitionState.SceneHidden;
                     }
@@ -191,20 +201,39 @@ namespace Snowdrama.Transition
                     }
                     break;
                 case TransitionState.FakeTimeBuffer:
-                    transitionSpeed = 1.0f / targetSceneTransition.fakeLoadBufferTime;
-                    fakeBufferTime += Time.unscaledDeltaTime * transitionSpeed;
-                    if (fakeBufferTime >= 1.0f)
+                    if(targetSceneTransition.fakeLoadBufferTime > 0)
                     {
+                        transitionSpeed = 1.0f / targetSceneTransition.fakeLoadBufferTime;
+                        fakeBufferTime += Time.unscaledDeltaTime * transitionSpeed;
+                        if (fakeBufferTime >= 1.0f)
+                        {
+                            fakeBufferTime = 0;
+                            transitionState = TransitionState.RevealingScene;
+                            transitionCallbacks.onShowStarted?.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        //if it's 0 it should be instant
                         fakeBufferTime = 0;
                         transitionState = TransitionState.RevealingScene;
                         transitionCallbacks.onShowStarted?.Invoke();
                     }
                     break;
                 case TransitionState.RevealingScene:
-                    transitionSpeed = 1.0f / targetSceneTransition.showSceneDuration;
-                    transitionValue -= Time.unscaledDeltaTime * transitionSpeed;
-                    if (transitionValue <= 0.0f)
+                    if (targetSceneTransition.showSceneDuration > 0)
                     {
+                        transitionSpeed = 1.0f / targetSceneTransition.showSceneDuration;
+                        transitionValue -= Time.unscaledDeltaTime * transitionSpeed;
+                        if (transitionValue <= 0.0f)
+                        {
+                            transitionValue = 0.0f;
+                            transitionCallbacks.onShowCompleted?.Invoke();
+                            transitionState = TransitionState.End;
+                        }
+                    } else {
+                        //if it's 0 it should be instant
+                        transitionValue = 0.0f;
                         transitionCallbacks.onShowCompleted?.Invoke();
                         transitionState = TransitionState.End;
                     }
@@ -481,6 +510,8 @@ namespace Snowdrama.Transition
             if (!isTransitioning)
             {
                 isTransitioning = true;
+                transitionValue = 0;
+                allowedTransitions = setSceneTransition.allowedTransitionNames;
                 targetSceneTransition = setSceneTransition;
                 transitionCallbacks.onTransitionStarted?.Invoke();
                 transitionState = TransitionState.Start;

@@ -70,8 +70,9 @@ namespace Snowdrama.Transition
             transitionMaterial.SetFloat("_Cutoff", transitionValue);
         }
 
-        private void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
             if (transitionImage == null)
             {
                 transitionImage = GetComponent<Image>();

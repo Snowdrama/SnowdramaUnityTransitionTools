@@ -105,8 +105,9 @@ namespace Snowdrama.Transition
             }
         }
 
-        private void OnValidate()
+        public override void OnValidate()
         {
+            base.OnValidate();
             foreach (var e in transitionElements)
             {
                 if(e.hideMinTime > e.hideMaxTime)

@@ -8,7 +8,6 @@ namespace Snowdrama.Transition
     [CreateAssetMenu(fileName = "SceneTransitionObject", menuName = "Snowdrama/Transitions/Scene Transition")]
     public class SceneTransitionObject : ScriptableObject
     {
-
         [SerializeField] private SceneTransition sceneTransition;
 
         public void TransitionToThis()
@@ -35,19 +34,22 @@ namespace Snowdrama.Transition
         [SerializeField] public SceneTransitionMode transitionMode;
 
         [Tooltip("A list of scenes to load")]
-        [SerializeField] public List<SceneTransitionData> scenes;
+        [SerializeField] public List<SceneTransitionData> scenes = new List<SceneTransitionData>();
 
         [Header("Time")]
-        [SerializeField] public float hideSceneDuration;
+        [SerializeField] public float hideSceneDuration = 1.0f;
 
         [Tooltip("Add a fake load time to make sure the transition doesn't look ugly when the scene loads too fast")]
-        [SerializeField] public float fakeLoadBufferTime;
-        [SerializeField] public float showSceneDuration;
+        [SerializeField] public float fakeLoadBufferTime = 1.0f;
+        [SerializeField] public float showSceneDuration = 1.0f;
 
+        [Tooltip("This is a list of the transition names allowed to be used" +
+            "if this is empty or if none of them are found a random transition will be chosen")]
+        [SerializeField] public List<string> allowedTransitionNames = new List<string>();
 
         [Header("Force Unload DontDestroy Scene")]
         [Tooltip("A list of DontDestroy scenes to force unload")]
-        [SerializeField] public List<string> doNotDestroyScenesToUnload;
+        [SerializeField] public List<string> doNotDestroyScenesToUnload = new List<string>();
     }
 
     [System.Serializable]
